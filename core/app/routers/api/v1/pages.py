@@ -4,35 +4,35 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.db import get_session
-from app.domain.pages import PagesDomain
+from app.controller.pages import PagesController
 from app.schemas.pages import PageIn as PageSchemaIn
 from app.schemas.pages import Page as PageSchema
 
-api_router = APIRouter(prefix='/api/v1')
+api_router = APIRouter()
 
 
-@api_router.get('/pages', response_model=List[PageSchema])
+@api_router.get('', response_model=List[PageSchema])
 async def get_all_pages(session: AsyncSession = Depends(get_session)):
-    pages = await PagesDomain.get_all_pages(session)
+    pages = await PagesController.get_all_pages(session)
     return pages
 
 
-@api_router.post('/pages')
+@api_router.post('')
 async def create_page(page: PageSchemaIn, session: AsyncSession = Depends(get_session)):
-    await PagesDomain.create_page(page, session)
+    await PagesController.create_page(page, session)
 
 
-@api_router.get('/pages/{page_id}', response_model=PageSchema)
+@api_router.get('/{page_id}', response_model=PageSchema)
 async def get_page(page_id: int, session: AsyncSession = Depends(get_session)):
-    page = await PagesDomain.get_page(page_id, session)
+    page = await PagesController.get_page(page_id, session)
     return page
 
 
-@api_router.put('/pages/{page_id}')
+@api_router.put('/{page_id}')
 async def update_page(page_id: int, page: PageSchemaIn, session: AsyncSession = Depends(get_session)):
-    await PagesDomain.update_page(page_id, page, session)
+    await PagesController.update_page(page_id, page, session)
 
 
-@api_router.delete('/pages/{page_id}')
+@api_router.delete('/{page_id}')
 async def delete_page(page_id: int, session: AsyncSession = Depends(get_session)):
-    await PagesDomain.delete_page(page_id, session)
+    await PagesController.delete_page(page_id, session)

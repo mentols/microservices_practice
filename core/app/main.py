@@ -1,8 +1,7 @@
 from fastapi import FastAPI
 
 from app.database.db import init_db
-from app.routers.pages import api_router as pages_router
-from app.routers.tasks import api_router as tasks_router
+from app.routers.api.routers import v1_router
 
 app = FastAPI()
 
@@ -12,5 +11,4 @@ async def on_startup():
     await init_db()
 
 
-app.include_router(pages_router)
-app.include_router(tasks_router)
+app.include_router(v1_router)

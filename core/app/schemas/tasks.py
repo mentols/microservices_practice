@@ -9,6 +9,8 @@ class Task(BaseModel):
     status: CompleteStatus
     page_id: int
 
+    class Config:
+        orm_mode = True
 
 class TaskIn(BaseModel):
     name: str

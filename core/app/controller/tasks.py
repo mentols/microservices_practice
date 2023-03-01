@@ -4,7 +4,7 @@ from app.repository.tasks import TasksRepository
 from app.schemas.tasks import TaskIn as TaskSchemaIn
 
 
-class TasksDomain:
+class TasksController:
     @staticmethod
     async def get_all_tasks(page_id: int, session: AsyncSession):
         tasks = await TasksRepository.get_all_tasks(page_id, session)

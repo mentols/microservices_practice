@@ -3,7 +3,7 @@ from app.schemas.pages import PageIn as PageSchemaIn
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
-class PagesDomain:
+class PagesController:
     @staticmethod
     async def get_all_pages(session: AsyncSession):
         pages = await PagesRepository.get_all_pages(session)

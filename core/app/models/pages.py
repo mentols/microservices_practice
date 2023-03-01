@@ -1,11 +1,11 @@
-from typing import List, Optional
+from sqlalchemy import Column, String
+from sqlalchemy.orm import relationship
 
-from sqlmodel import Field, Relationship, SQLModel
+from app.models.base import BaseModel
 
 
-class Page(SQLModel, table=True):
+class Page(BaseModel):
     __tablename__ = 'pages'
-    id: Optional[int] = Field(default=None, primary_key=True, unique=True)
-    name: str = Field(index=True)
+    name = Column(String(256))
 
-    tasks: List["Task"] = Relationship(back_populates="page")
+    tasks = relationship('Task', back_populates='page')

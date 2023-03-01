@@ -27,16 +27,15 @@ class PagesRepository:
         await session.commit()
 
     @staticmethod
-    async def get_page(page_id, session: AsyncSession) -> PageSchema:
+    async def get_page(page_id, session: AsyncSession):
         result = await session.execute(select(Page).where(Page.id == page_id))
-        page = result.scalars().first()
-        return PageSchema(id=page.id, name=page.name)
+        return result.scalars().first()
 
     @staticmethod
-    async def get_all_pages(session: AsyncSession) -> List[PageSchema]:
+    async def get_all_pages(session: AsyncSession):
         result = await session.execute(select(Page))
-        pages = result.scalars().all()
-        return [PageSchema(id=page.id, name=page.name) for page in pages]
+        return result.scalars().all()
+        # return [PageSchema(id=page.id, name=page.name) for page in pages]
 
     @staticmethod
     async def delete_page(page_id, session: AsyncSession) -> None:

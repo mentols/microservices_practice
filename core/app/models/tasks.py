@@ -1,10 +1,9 @@
 import enum
-from typing import List, Optional
 
-from sqlmodel import Enum
-from sqlmodel import Field, Relationship, SQLModel, Column
+from sqlalchemy import Column, String, Enum, ForeignKey, Integer
+from sqlalchemy.orm import relationship
 
-from app.models.pages import Page
+from app.models.base import BaseModel
 
 
 class CompleteStatus(str, enum.Enum):
@@ -12,14 +11,13 @@ class CompleteStatus(str, enum.Enum):
     done = 'done'
 
 
-class Task(SQLModel, table=True):
+class Task(BaseModel):
     __tablename__ = 'tasks'
-    id: Optional[int] = Field(default=None, primary_key=True, unique=True)
-    name: str = Field(index=True)
-    status: CompleteStatus = Field(sa_column=Column(Enum(CompleteStatus)), default=CompleteStatus.in_progress)
+    name = Column(String(256))
+    status: CompleteStatus = Column(Enum(CompleteStatus), default=CompleteStatus.in_progress)
 
-    page_id: Optional[int] = Field(nullable=False, foreign_key="pages.id")
-    page: Optional[Page] = Relationship(back_populates="tasks")
+    page_id = Column(Integer, ForeignKey('pages.id'), primary_key=True)
+    page = relationship('Page', back_populates='tasks')
 
     class Config:
         arbitrary_types_allowed = True

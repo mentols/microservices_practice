@@ -3,6 +3,7 @@ services:
   fastapi:
     container_name: 'fastapi-core'
     entrypoint: "/entrypoint.sh"
+    restart: on-failure
     build: .
     expose:
       - ${FASTAPI_PORT}
@@ -20,14 +21,3 @@ services:
       - ./postgres_data:/var/lib/postgresql/data/
     env_file:
       - .env
-
-#  pgadmin:
-#    container_name: pgadmin
-#    image: dpage/pgadmin4
-#    environment:
-#      - PGADMIN_DEFAULT_EMAIL=pgadmin4@pgadmin.org
-#      - PGADMIN_DEFAULT_PASSWORD=admin
-#    ports:
-#      - "5050:80"
-#    depends_on:
-#      - postgres

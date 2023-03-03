@@ -1,8 +1,10 @@
 from typing import List
 
+from fastapi import HTTPException
 from sqlalchemy import delete, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from starlette import status
 
 from app.models.pages import Page
 from app.models.tasks import Task, CompleteStatus
@@ -27,14 +29,27 @@ class TasksRepository:
     @staticmethod
     async def get_task(task_id: int, session: AsyncSession) -> TaskSchema:
         query = await session.execute(select(Task).where(Task.id == task_id))
-        return query.scalars().first()
+        task = query.scalars().first()
+        if task:
+            return task
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Task is not exists",
+        )
 
     @staticmethod
     async def complete_task(task_id, session: AsyncSession) -> None:
         changed_status: list = []
         query = await session.execute(select(Task).where(Task.id == task_id))
-        status = query.scalars().first().status
-        [changed_status.append(st) if st != status else ... for st in CompleteStatus]
+        task = query.scalars().first()
+        if not task:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Task is not exists",
+            )
+
+        task_status = task.status
+        [changed_status.append(st) if st != task_status else ... for st in CompleteStatus]
         query = (
             update(Task).where(Task.id == task_id)
                 .values(status=changed_status[0])

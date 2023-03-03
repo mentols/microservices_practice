@@ -1,6 +1,7 @@
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.repository.pages import PagesRepository
 from app.schemas.pages import PageIn as PageSchemaIn
-from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class PagesController:
@@ -15,8 +16,8 @@ class PagesController:
         return page
 
     @staticmethod
-    async def create_page(page: PageSchemaIn, session: AsyncSession):
-        await PagesRepository.create_page(page.dict(), session)
+    async def create_page(page: PageSchemaIn, session: AsyncSession, authorization):
+        await PagesRepository.create_page(page.dict(), session, authorization)
 
     @staticmethod
     async def update_page(page_id: int, page: PageSchemaIn, session: AsyncSession):

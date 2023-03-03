@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "dad5de5304177250e39c6118c8e6b397d782aec90c88b90631220264f21e720c"
+            "sha256": "5301876bcf1116cd0bf630b2092a8aa1ce3490fe45bde3298c8cf34972ecf716"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -244,6 +244,14 @@
             "markers": "python_version >= '3.7'",
             "version": "==2.1.2"
         },
+        "passlib": {
+            "hashes": [
+                "sha256:aa6bca462b8d8bda89c70b382f0c298a20b5560af6cbfa2dce410c0a2fb669f1",
+                "sha256:defd50f72b65c5402ab2c573830a6978e5f202ad0d984793c8dde2c4152ebe04"
+            ],
+            "index": "pypi",
+            "version": "==1.7.4"
+        },
         "psycopg2": {
             "hashes": [
                 "sha256:093e3894d2d3c592ab0945d9eba9d139c139664dcf83a1c440b8a7aa9bb21955",
@@ -304,6 +312,14 @@
             ],
             "index": "pypi",
             "version": "==1.10.5"
+        },
+        "pyjwt": {
+            "hashes": [
+                "sha256:69285c7e31fc44f68a1feb309e948e0df53259d579295e6cfe2b1792329f05fd",
+                "sha256:d83c3d892a77bbb74d3e1a2cfa90afaadb60945205d1095d9221f04466f64c14"
+            ],
+            "index": "pypi",
+            "version": "==2.6.0"
         },
         "python-dotenv": {
             "hashes": [

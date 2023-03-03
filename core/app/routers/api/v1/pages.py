@@ -1,12 +1,15 @@
 from typing import List
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Header
 from sqlalchemy.ext.asyncio import AsyncSession
+from starlette import status
+from starlette.responses import Response
 
-from app.database.db import get_session
 from app.controller.pages import PagesController
-from app.schemas.pages import PageIn as PageSchemaIn
+from app.database.db import get_session
 from app.schemas.pages import Page as PageSchema
+from app.schemas.pages import PageIn as PageSchemaIn
+from app.services.permissions import Permissions
 
 api_router = APIRouter()
 
@@ -18,21 +21,25 @@ async def get_all_pages(session: AsyncSession = Depends(get_session)):
 
 
 @api_router.post('')
-async def create_page(page: PageSchemaIn, session: AsyncSession = Depends(get_session)):
-    await PagesController.create_page(page, session)
+async def create_page(page: PageSchemaIn, session: AsyncSession = Depends(get_session),
+                      authorization: str = Header(None)):
+    await PagesController.create_page(page, session, authorization)
+    return Response(status_code=status.HTTP_200_OK)
 
 
-@api_router.get('/{page_id}', response_model=PageSchema)
+@api_router.get('/{page_id}', response_model=PageSchema, dependencies=[Depends(Permissions.check_page_permission)])
 async def get_page(page_id: int, session: AsyncSession = Depends(get_session)):
     page = await PagesController.get_page(page_id, session)
     return page
 
 
-@api_router.put('/{page_id}')
+@api_router.put('/{page_id}', dependencies=[Depends(Permissions.check_page_permission)])
 async def update_page(page_id: int, page: PageSchemaIn, session: AsyncSession = Depends(get_session)):
     await PagesController.update_page(page_id, page, session)
+    return Response(status_code=status.HTTP_200_OK)
 
 
-@api_router.delete('/{page_id}')
+@api_router.delete('/{page_id}', dependencies=[Depends(Permissions.check_page_permission)])
 async def delete_page(page_id: int, session: AsyncSession = Depends(get_session)):
     await PagesController.delete_page(page_id, session)
+    return Response(status_code=status.HTTP_200_OK)

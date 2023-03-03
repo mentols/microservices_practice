@@ -13,7 +13,7 @@ class CompleteStatus(str, enum.Enum):
 
 class Task(BaseModel):
     __tablename__ = 'tasks'
-    name = Column(String(256))
+    name = Column(String(256), unique=True, nullable=False)
     status: CompleteStatus = Column(Enum(CompleteStatus), default=CompleteStatus.in_progress)
 
     page_id = Column(Integer, ForeignKey('pages.id'), primary_key=True)

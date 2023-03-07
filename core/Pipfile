@@ -16,6 +16,8 @@ sqlalchemy = "*"
 jinja2 = "*"
 pyjwt = "*"
 passlib = "*"
+email-validator = "*"
+aiokafka = "*"
 
 [dev-packages]
 

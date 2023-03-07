@@ -5,41 +5,12 @@ import jwt
 from fastapi import HTTPException
 from starlette import status
 
-from app.schemas.tokens import Token as TokenSchema
-from app.schemas.users import User as UserSchema
 from config import Config
 
 logger = logging.getLogger(__name__)
 
 
 class TokenServices:
-    def __init__(self, user: UserSchema):
-        self._user = user
-        self.access_token = self.generate_access_token
-        self.refresh_token = self.generate_refresh_token
-
-    async def generate_access_token(self):
-        access_token_payload = {
-            'id': self._user.id,
-            'exp': datetime.utcnow() + timedelta(minutes=Config.JWT_ACCESS_TTL),
-        }
-        access_token = jwt.encode(access_token_payload, Config.SECRET_KEY, algorithm=Config.ALGORITHM)
-        return access_token
-
-    async def generate_refresh_token(self):
-        refresh_token_payload = {
-            'id': self._user.id,
-            'exp': datetime.utcnow() + timedelta(minutes=Config.JWT_REFRESH_TTL),
-        }
-        refresh_token = jwt.encode(refresh_token_payload, Config.SECRET_KEY, algorithm=Config.ALGORITHM)
-        return refresh_token
-
-    async def generate_response(self) -> TokenSchema:
-        access = await self.generate_access_token()
-        refresh = await self.generate_refresh_token()
-
-        return TokenSchema(access_token=access, refresh_token=refresh)
-
     @staticmethod
     def create_response(request_id, code, message):
         """

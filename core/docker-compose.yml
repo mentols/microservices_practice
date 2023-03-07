@@ -3,6 +3,8 @@ services:
   fastapi:
     container_name: 'fastapi-core'
     entrypoint: "/entrypoint.sh"
+    networks:
+      - app_network
     restart: on-failure
     build: .
     expose:
@@ -13,11 +15,49 @@ services:
       - ${FASTAPI_PORT}:${FASTAPI_PORT}
     depends_on:
       - postgres
+      - kafka
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - KAFKA_TOPIC=test
 
   postgres:
     container_name: 'postgres'
+    networks:
+      - app_network
     image: postgres:14
     volumes:
       - ./postgres_data:/var/lib/postgresql/data/
     env_file:
       - .env
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    networks:
+      - app_network
+    ports:
+      - "2181:2181"
+    healthcheck:
+      test: echo stat | nc localhost 2181
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    env_file:
+      - .env
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: 'kafka'
+    networks:
+      - app_network
+    healthcheck:
+      test: ps augwwx | egrep [S]upportedKafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9091:9091"
+    env_file:
+      - .env
+
+networks:
+  app_network:
+    name: microservice_practic

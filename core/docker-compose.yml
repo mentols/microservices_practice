@@ -1,0 +1,33 @@
+version: '3.8'
+services:
+  fastapi:
+    container_name: 'fastapi-core'
+    entrypoint: "/entrypoint.sh"
+    build: .
+    expose:
+      - ${FASTAPI_PORT}
+    volumes:
+      - "./:/microservice"
+    ports:
+      - ${FASTAPI_PORT}:${FASTAPI_PORT}
+    depends_on:
+      - postgres
+
+  postgres:
+    container_name: 'postgres'
+    image: postgres:14
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - .env
+
+#  pgadmin:
+#    container_name: pgadmin
+#    image: dpage/pgadmin4
+#    environment:
+#      - PGADMIN_DEFAULT_EMAIL=pgadmin4@pgadmin.org
+#      - PGADMIN_DEFAULT_PASSWORD=admin
+#    ports:
+#      - "5050:80"
+#    depends_on:
+#      - postgres

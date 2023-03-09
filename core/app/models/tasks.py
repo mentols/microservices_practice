@@ -1,19 +1,13 @@
-import enum
-
 from sqlalchemy import Column, String, Enum, ForeignKey, Integer
 from sqlalchemy.orm import relationship
 
+from app.enum.tasks import CompleteStatus
 from app.models.base import BaseModel
-
-
-class CompleteStatus(str, enum.Enum):
-    in_progress = 'in_progress'
-    done = 'done'
 
 
 class Task(BaseModel):
     __tablename__ = 'tasks'
-    name = Column(String(256), unique=True, nullable=False)
+    name = Column(String(256), nullable=False)
     status: CompleteStatus = Column(Enum(CompleteStatus), default=CompleteStatus.in_progress)
 
     page_id = Column(Integer, ForeignKey('pages.id'), primary_key=True)

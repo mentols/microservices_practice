@@ -1,17 +1,14 @@
-import asyncio
+import json
+
 from aiokafka import AIOKafkaProducer
+from config import Config
 
 
-async def send_one():
-    producer = AIOKafkaProducer(bootstrap_servers='0.0.0.0:9091')
-    # Get cluster layout and initial topic/partition leadership information
+# todo: add login
+async def send_one(message: dict):
+    producer = AIOKafkaProducer(bootstrap_servers='kafka:9092')
     await producer.start()
     try:
-        # Produce message
-        await producer.send_and_wait("my_topic", b"Super message")
+        await producer.send_and_wait(Config.Topic, json.dumps(message).encode('utf-8'))
     finally:
-        # Wait for all pending messages to be delivered or expire.
         await producer.stop()
-
-
-asyncio.run(send_one())

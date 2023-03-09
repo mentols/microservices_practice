@@ -5,4 +5,4 @@ source .env
 
 set -e
 export PYTHONPATH=/core/:$PYTHONPATH
-uvicorn app.main:app --host ${FASTAPI_HOST} --reload --port ${FASTAPI_PORT}
+uvicorn app.main:app --host 0.0.0.0 --reload --port 8000

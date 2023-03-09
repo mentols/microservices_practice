@@ -6,9 +6,13 @@ load_dotenv()
 
 
 class Config:
-    DB_USER = os.getenv("DB_USER")
-    DB_PASSWORD = os.getenv("DB_PASSWORD")
-    DB_NAME = os.getenv("DB_NAME")
-    DB_HOST = os.getenv("DB_HOST")
-    DB_PORT = os.getenv("DB_PORT")
-    DB_CONFIG = f"postgresql+asyncpg://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    User = os.getenv("DB_USER")
+    Password = os.getenv("DB_PASSWORD")
+    Name = os.getenv("DB_NAME")
+    Host = os.getenv("DB_HOST")
+    Port = os.getenv("DB_PORT")
+    Config = f"postgresql+asyncpg://{User}:{Password}@{Host}:{Port}/{Name}"
+
+    Server = os.getenv("BOOTSTRAP_SERVER")
+    Topic = os.getenv("TOPIC")
+

@@ -16,9 +16,6 @@ services:
     depends_on:
       - postgres
       - kafka
-    environment:
-      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
-      - KAFKA_TOPIC=test
 
   postgres:
     container_name: 'postgres'
@@ -34,29 +31,26 @@ services:
     image: confluentinc/cp-zookeeper:latest
     networks:
       - app_network
-    ports:
-      - "2181:2181"
-    healthcheck:
-      test: echo stat | nc localhost 2181
-      interval: 10s
-      timeout: 10s
-      retries: 3
     env_file:
       - .env
+    expose:
+      - ${ZOOKEEPER_PORT}
+    ports:
+      - ${ZOOKEEPER_PORT}:${ZOOKEEPER_PORT}
 
   kafka:
     image: confluentinc/cp-kafka:latest
-    container_name: 'kafka'
     networks:
       - app_network
-    healthcheck:
-      test: ps augwwx | egrep [S]upportedKafka
     depends_on:
       - zookeeper
+    expose:
+      - ${KAFKA_PORTS}
     ports:
-      - "9091:9091"
+      - ${KAFKA_PORTS}:${KAFKA_PORTS}
     env_file:
       - .env
+
 
 networks:
   app_network:

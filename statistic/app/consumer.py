@@ -21,7 +21,7 @@ async def consume():
             data_string = f"Consumed! Topic: {msg.topic}, Partition: {msg.partition}, Offset: {msg.offset}, " \
                           f"Key: {msg.key}, Value: {msg.value}, Timestamp: {msg.timestamp}"
             logging.basicConfig(level=data_string)
-            await PagesController.control(msg.value)
+            await PagesController().control(msg.value)
     except KeyboardInterrupt:
         await consumer.stop()
 

@@ -1,65 +1,62 @@
 from app.repository.pages import PagesRepository
-from app.schemas.pages import Page
+from app.schemas.pages import Page as PageSchema
 
 
 class PagesController:
-    @staticmethod
-    async def calculate_resolution_percentage(resolved: int, amount: int):
-        return round((resolved / amount) * 100, 2)
+    def __init__(self, client):
+        self.repository = PagesRepository(client)
 
-    @staticmethod
-    async def control(message: dict):
-        key, value = [k for k in message], [v for v in message.values()]
+    async def control(self, message: dict):
+        key: str = [k for k in message][0]
+        value: int = [v for v in message.values()][0]
         action_dict = {
-            'add': PagesController.create_page,
-            'upd': PagesController.update_page,
-            'del': PagesController.delete_page,
-            'add_t': PagesController.create_task
+            'add': self.create_page,
+            'upd': self.update_page,
+            'del': self.delete_page,
+            'add_t': self.create_task
         }
-        await action_dict.get(key[0])(value[0])
+        await action_dict.get(key)(value)
 
-    @staticmethod
-    async def statistic(page_id: int):
-        page_statistic = await PagesRepository.get(page_id)
+    async def statistic(self, page_id: int):
+        page_statistic = await self.repository.get(page_id=page_id)
         return page_statistic
 
-    @staticmethod
-    async def create_page(page_id: int):
-        page = Page(
+    async def create_page(self, page_id: int):
+        page = PageSchema(
             page_id=page_id,
             task_amount=0,
             resolved=0,
             unresolved=0,
             resolution_percentage=0,
         )
-        await PagesRepository.create(page)
+        await self.repository.create(page)
 
-    @staticmethod
-    async def create_task(page_id: int):
-        page = await PagesRepository.get(page_id)
+    async def create_task(self, page_id: int):
+        page = await self.repository.get(page_id=page_id)
         page.unresolved += 1
         page.task_amount += 1
-        page.resolution_percentage = await PagesController.calculate_resolution_percentage(
+        page.resolution_percentage = await self.calculate_resolution_percentage(
             page.resolved, page.task_amount
         )
-        await PagesRepository.create_task(page)
+        await self.repository.create_task(page)
 
-    @staticmethod
-    async def update_page(page_id: int):
-        old_page = await PagesRepository.get(page_id)
+    async def update_page(self, page_id: int):
+        old_page = await self.repository.get(instance_id=page_id)
         old_page.unresolved -= 1
         old_page.resolved += 1
-        new_page = Page(
+        new_page = PageSchema(
             page_id=page_id,
             task_amount=old_page.task_amount,
             resolved=old_page.resolved,
             unresolved=old_page.unresolved,
-            resolution_percentage=await PagesController.calculate_resolution_percentage(
+            resolution_percentage=await self.calculate_resolution_percentage(
                 old_page.resolved, old_page.task_amount
             ),
         )
-        await PagesRepository.update(new_page)
+        await self.repository.update(new_page)
 
-    @staticmethod
-    async def delete_page(page_id: int):
-        await PagesRepository.delete(page_id)
+    async def delete_page(self, page_id: int):
+        await self.repository.delete(page_id=page_id)
+
+    async def calculate_resolution_percentage(self, resolved: int, amount: int):
+        return round((resolved / amount) * 100, 2)

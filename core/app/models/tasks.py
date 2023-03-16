@@ -10,8 +10,17 @@ class Task(BaseModel):
     name = Column(String(256), nullable=False)
     status: CompleteStatus = Column(Enum(CompleteStatus), default=CompleteStatus.in_progress)
 
-    page_id = Column(Integer, ForeignKey('pages.id'), primary_key=True)
+    page_id = Column(Integer, ForeignKey('pages.id', ondelete='CASCADE'), primary_key=True)
     page = relationship('Page', back_populates='tasks')
+
+    def flip_status(self):
+        """
+        Flips the status of this task to the opposite value
+        """
+        if self.status == CompleteStatus.in_progress:
+            self.status = CompleteStatus.done
+        else:
+            self.status = CompleteStatus.in_progress
 
     class Config:
         arbitrary_types_allowed = True

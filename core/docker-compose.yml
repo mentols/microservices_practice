@@ -6,16 +6,18 @@ services:
     networks:
       - app_network
     restart: on-failure
-    build: .
+    build:
+      context: .
+      dockerfile: ../Dockerfile
     expose:
       - ${FASTAPI_PORT}
     volumes:
-      - "./:/microservice"
+      - "./:/core"
     ports:
       - ${FASTAPI_PORT}:${FASTAPI_PORT}
     depends_on:
       - postgres
-#      - kafka
+      - kafka
 
   postgres:
     container_name: 'postgres'
@@ -23,34 +25,49 @@ services:
       - app_network
     image: postgres:14
     volumes:
-      - ./postgres_data:/var/lib/postgresql/data/
+      - pg_data:/var/lib/postgresql/
     env_file:
       - .env
 
-#  zookeeper:
-#    image: confluentinc/cp-zookeeper:latest
-#    networks:
-#      - app_network
-#    env_file:
-#      - .env
-#    expose:
-#      - ${ZOOKEEPER_PORT}
-#    ports:
-#      - ${ZOOKEEPER_PORT}:${ZOOKEEPER_PORT}
-#
-#  kafka:
-#    image: confluentinc/cp-kafka:latest
-#    networks:
-#      - app_network
-#    depends_on:
-#      - zookeeper
-#    expose:
-#      - ${KAFKA_PORTS}
-#    ports:
-#      - ${KAFKA_PORTS}:${KAFKA_PORTS}
-#    env_file:
-#      - .env
+  pgadmin:
+    container_name: 'pgadmin'
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=pgadmin4@pgadmin.org
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
 
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    networks:
+      - app_network
+    env_file:
+      - .env
+    expose:
+      - ${ZOOKEEPER_PORT}
+    ports:
+      - ${ZOOKEEPER_PORT}:${ZOOKEEPER_PORT}
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    networks:
+      - app_network
+    expose:
+      - ${KAFKA_PORTS}
+    ports:
+      - ${KAFKA_PORTS}:${KAFKA_PORTS}
+    env_file:
+      - .env
+    depends_on:
+      - zookeeper
+
+
+volumes:
+  pg_data:
+    external: true
 
 networks:
   app_network:

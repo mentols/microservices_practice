@@ -3,7 +3,6 @@ from typing import List
 from fastapi import HTTPException
 from starlette import status
 
-from app.enum.tasks import CompleteStatus
 from app.generics.uow import UnitOfWork
 from app.models.tasks import Task
 from app.schemas.tasks import TaskIn as TaskSchemaIn
@@ -32,14 +31,14 @@ class TasksServices:
         async with self.uow:
             task = Task(page_id=page_id, **(task.dict()))
             await self.uow.tasks.create(task)
-            # await send_one({'add_t': page_id})
+            await send_one({'add_t': page_id})
 
     async def complete_task(self, task_id: int) -> None:
         async with self.uow:
             task = await self.uow.tasks.get(id=task_id)
             task.flip_status()
             await self.uow.tasks.update(task)
-            # await send_one({'upd': task.page_id})
+            await send_one({'upd': task.page_id})
 
     async def delete_task(self, task_id) -> None:
         async with self.uow:

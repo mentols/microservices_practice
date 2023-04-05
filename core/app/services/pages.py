@@ -5,6 +5,7 @@ from starlette import status
 
 from app.generics.uow import UnitOfWork
 from app.models.pages import Page
+from app.permissions.tokens import TokenServices
 from app.schemas.pages import PageIn as PageSchemaIn
 from producer import send_one
 
@@ -28,12 +29,12 @@ class PagesServices:
             )
 
     async def create_page(self, page: PageSchemaIn, authorization) -> None:
-        # owner_id = await TokenServices.decode_access_jwt_token(authorization)
+        # todo: get user id with auth_microservice endpoint
+        owner_id = await TokenServices.decode_access_jwt_token(authorization)
         async with self.uow:
-            owner_id = 1
             page = Page(owner_id=owner_id, **(page.dict()))
             page_id = await self.uow.pages.create(page)
-            # await send_one({'add': page_id})
+            await send_one({'add': page_id})
 
     async def update_page(self, page_id: int, page: PageSchemaIn) -> None:
         async with self.uow:
@@ -44,4 +45,4 @@ class PagesServices:
     async def delete_page(self, page_id) -> None:
         async with self.uow:
             await self.uow.pages.delete(id=page_id)
-            # await send_one({'del': page_id})
+            await send_one({'del': page_id})

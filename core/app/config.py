@@ -12,7 +12,7 @@ class Config:
     Name = os.getenv("DB_NAME")
     Host = os.getenv("DB_HOST")
     Port = os.getenv("DB_PORT")
-    Config = f"postgresql+asyncpg://{User}:{Password}@{Host}:{Port}/{Name}"
+    DatabaseUrl = f"postgresql+asyncpg://{User}:{Password}@{Host}:{Port}/{Name}"
 
     # Kafka configuration
     Server = os.getenv("BOOTSTRAP_SERVER")

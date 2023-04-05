@@ -1,7 +1,7 @@
 import json
 
 from aiokafka import AIOKafkaProducer
-from config import Config
+from app.config import Config
 
 
 # todo: add login

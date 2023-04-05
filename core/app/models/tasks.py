@@ -10,8 +10,11 @@ class Task(BaseModel):
     name = Column(String(256), nullable=False)
     status: CompleteStatus = Column(Enum(CompleteStatus), default=CompleteStatus.in_progress)
 
-    page_id = Column(Integer, ForeignKey('pages.id', ondelete='CASCADE'), primary_key=True)
-    page = relationship('Page', back_populates='tasks')
+    page_id = Column(Integer, ForeignKey('pages.id', ondelete='CASCADE'), nullable=False)
+    # page = relationship('Page', backref='tasks')
+
+    # page_id = Column(Integer, ForeignKey('pages.id', ondelete='CASCADE'), nullable=False)
+    # page = relationship('Page')
 
     def flip_status(self):
         """

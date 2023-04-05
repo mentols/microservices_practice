@@ -8,4 +8,4 @@ class Page(BaseModel):
     __tablename__ = 'pages'
     name = Column(String(256), nullable=False)
     owner_id = Column(Integer, nullable=False)
-    tasks = relationship('Task', backref=backref('page', cascade='all, delete-orphan'))
+    tasks = relationship('Task', backref='page_relation')

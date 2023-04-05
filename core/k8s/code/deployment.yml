@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi-core-deployment
+  namespace: todo-project
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fastapi-core
+  template:
+    metadata:
+      labels:
+        app: fastapi-core
+    spec:
+      initContainers:
+        - name: init-postgres-service
+          image: postgres:14
+          command: ['sh', '-c',
+          'until pg_isready -h postgres.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local -p 5432;
+          do echo waiting for database; sleep 2; done;']
+      restartPolicy: Always
+      containers:
+        - name: core
+          image: mentolss/fastapi-core:v2.3
+          envFrom:
+            - secretRef:
+                name: fastapi-core-secret
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+              name: fastapi
+          readinessProbe:
+            httpGet:
+              port: 8000
+              path: /docs
+            initialDelaySeconds: 15
+          livenessProbe:
+            httpGet:
+              port: 8000
+              path: /docs
+            initialDelaySeconds: 15
+            periodSeconds: 15
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "0.5"
+            limits:
+              memory: "1Gi"
+              cpu: "1"

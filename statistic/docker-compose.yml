@@ -3,8 +3,9 @@ services:
   fastapi:
     build:
       context: .
+      dockerfile: Dockerfile
     container_name: 'fastapi-statistic'
-    entrypoint: "/entrypoint.sh"
+    entrypoint: ["/entrypoint.sh", "fastapi"]
     env_file:
       - .env
     restart: on-failure
@@ -13,7 +14,7 @@ services:
     expose:
       - ${FASTAPI_PORT}
     volumes:
-      - "./:/microservice"
+      - "./:/statistic"
     ports:
       - ${FASTAPI_PORT}:${FASTAPI_PORT}
     depends_on:
@@ -36,7 +37,7 @@ services:
     container_name: 'statistic-microservice-loop'
     networks:
       - statistic_network
-    entrypoint: "/event-loop-entrypoint.sh"
+    entrypoint: ["/entrypoint.sh", "consumer"]
     depends_on:
       - fastapi
 

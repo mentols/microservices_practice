@@ -20,8 +20,14 @@ COPY . .
 
 # Run project
 COPY app/consumer.py /
-COPY event-loop-entrypoint.sh /event-loop-entrypoint.sh
+#COPY event-loop-entrypoint.sh /event-loop-entrypoint.sh
 COPY ./entrypoint.sh /entrypoint.sh
-#RUN sed -i 's/\r$//g' /entrypoint.sh
-RUN chmod +x /event-loop-entrypoint.sh
+RUN sed -i 's/\r$//g' /entrypoint.sh
+RUN #chmod +x /event-loop-entrypoint.sh
 RUN chmod +x /entrypoint.sh
+
+
+CMD ["/bin/bash", "/entrypoint.sh", "fastapi"] && ["/bin/bash", "/entrypoint.sh", "consumer"]
+
+#ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]
+#ENTRYPOINT ["/bin/bash", "/event-loop-entrypoint.sh"]

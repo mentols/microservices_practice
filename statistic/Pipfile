@@ -12,7 +12,6 @@ python-dotenv = "*"
 pyjwt = "*"
 aiokafka = "*"
 motor = "*"
-beanie = "*"
 bson = "*"
 
 [dev-packages]

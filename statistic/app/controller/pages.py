@@ -1,3 +1,6 @@
+from fastapi import HTTPException
+from starlette import status
+
 from app.repository.pages import PagesRepository
 from app.schemas.pages import Page as PageSchema
 
@@ -19,7 +22,12 @@ class PagesController:
 
     async def statistic(self, page_id: int):
         page_statistic = await self.repository.get(page_id=page_id)
-        return page_statistic
+        if page_statistic:
+            return page_statistic
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Page is not exists",
+        )
 
     async def create_page(self, page_id: int):
         page = PageSchema(

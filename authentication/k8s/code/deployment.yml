@@ -21,7 +21,7 @@ spec:
           command: ['sh', '-c',
           'until pg_isready -h postgres-auth.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local -p 5432;
           do echo waiting for database; sleep 2; done;']
-      restartPolicy: Always
+      restartPolicy: OnFailure
       containers:
         - name: auth
           image: mentolss/fastapi-auth:v1

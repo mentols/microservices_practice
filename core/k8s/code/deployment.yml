@@ -22,10 +22,13 @@ spec:
       restartPolicy: Always
       containers:
         - name: core
-          image: mentolss/fastapi-core:v2.3
+          image: mentolss/fastapi-core:v2.11
           envFrom:
             - secretRef:
                 name: fastapi-core-secret
+          env:
+            - name: BOOTSTRAP_SERVER
+              value: "kafka:9092"
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000
@@ -41,10 +44,3 @@ spec:
               path: /docs
             initialDelaySeconds: 15
             periodSeconds: 15
-          resources:
-            requests:
-              memory: "512Mi"
-              cpu: "0.5"
-            limits:
-              memory: "1Gi"
-              cpu: "1"

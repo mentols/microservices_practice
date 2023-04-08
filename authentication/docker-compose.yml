@@ -1,0 +1,48 @@
+version: '3.8'
+services:
+  fastapi:
+    container_name: 'fastapi-auth'
+    networks:
+      - auth_network
+    entrypoint: "/entrypoint.sh"
+    restart: on-failure
+    build: .
+    expose:
+      - ${FASTAPI_PORT}
+    volumes:
+      - "./:/microservice"
+    ports:
+      - ${FASTAPI_PORT}:${FASTAPI_PORT}
+    depends_on:
+      - postgres
+
+  postgres:
+    container_name: 'postgres-auth'
+    restart: always
+    networks:
+      - auth_network
+    image: postgres:14
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    env_file:
+      - .env
+
+  api_gateway:
+    container_name: 'api-getaway-auth'
+    build:
+      context: ./nginx
+      dockerfile: nginx.Dockerfile
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - auth_network
+    depends_on:
+      - fastapi
+
+
+networks:
+  auth_network:
+    name: microservice_practic

@@ -1,0 +1,51 @@
+version: '3.8'
+services:
+  fastapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: 'fastapi-statistic'
+    entrypoint: ["/entrypoint.sh", "fastapi"]
+    env_file:
+      - .env
+    restart: on-failure
+    networks:
+      - statistic_network
+    expose:
+      - ${FASTAPI_PORT}
+    volumes:
+      - "./:/statistic"
+    ports:
+      - ${FASTAPI_PORT}:${FASTAPI_PORT}
+    depends_on:
+      - mongo
+
+  mongo:
+    container_name: 'mongo-statistic'
+    image: mongo:4.4.4-bionic
+    env_file:
+      - .env
+    networks:
+      - statistic_network
+    ports:
+      - ${MONGO_PORT}:${MONGO_PORT}
+    volumes:
+      - mongo_data:/data/db
+
+  mploop:
+    build: .
+    container_name: 'statistic-microservice-loop'
+    networks:
+      - statistic_network
+    entrypoint: ["/entrypoint.sh", "consumer"]
+    depends_on:
+      - fastapi
+
+
+
+networks:
+  statistic_network:
+    name: microservice_practic
+
+volumes:
+  mongo_data:

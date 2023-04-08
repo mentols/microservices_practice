@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: zookeeper
+  namespace: todo-project
+  labels:
+    app: zookeeper
+spec:
+  selector:
+    app: zookeeper
+  ports:
+    - name: zk-client
+#      22181
+      port: 2181
+      targetPort: 2181
+#    - name: zk-peer
+#      port: 2888
+#      targetPort: 2888
+#    - name: zk-election
+#      port: 3888
+#      targetPort: 3888
+#
+#  selector:
+#    app:  zookeeper
+#status:
+#  loadBalancer: {}

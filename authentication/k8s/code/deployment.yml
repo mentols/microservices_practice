@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi-auth-deployment
+  namespace: todo-project
+  labels:
+    app: fastapi-auth
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fastapi-auth
+  template:
+    metadata:
+      labels:
+        app: fastapi-auth
+    spec:
+      initContainers:
+        - name: init-postgres-auth-service
+          image: postgres:14
+          command: ['sh', '-c',
+          'until pg_isready -h postgres-auth.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local -p 5432;
+          do echo waiting for database; sleep 2; done;']
+      restartPolicy: Always
+      containers:
+        - name: auth
+          image: mentolss/fastapi-auth:v1
+          envFrom:
+            - secretRef:
+                name: fastapi-auth-secret
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8002
+              name: fastapi
+          readinessProbe:
+            httpGet:
+              port: 8002
+              path: /docs
+            initialDelaySeconds: 15
+          livenessProbe:
+            httpGet:
+              port: 8002
+              path: /docs
+            initialDelaySeconds: 15
+            periodSeconds: 15
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "0.5"
+            limits:
+              memory: "1Gi"
+              cpu: "1"

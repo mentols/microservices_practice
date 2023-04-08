@@ -12,5 +12,6 @@ class Task(BaseModel):
     class Config:
         orm_mode = True
 
+
 class TaskIn(BaseModel):
     name: str

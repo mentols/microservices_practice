@@ -1,5 +1,6 @@
 .idea
-
+.core/postgres_data
+../.gitignore
 # Created by https://www.gitignore.io/api/macos,linux,django,python,pycharm
 
 ### Django ###
@@ -194,7 +195,7 @@ celerybeat-schedule
 *.sage.py
 
 # dotenv
-.env
+core/.env
 
 # virtualenv
 .venv

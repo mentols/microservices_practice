@@ -24,7 +24,7 @@ spec:
       restartPolicy: OnFailure
       containers:
         - name: auth
-          image: mentolss/fastapi-auth:v1
+          image: mentolss/fastapi-auth:latest
           envFrom:
             - secretRef:
                 name: fastapi-auth-secret

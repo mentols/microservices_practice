@@ -22,7 +22,7 @@ spec:
       restartPolicy: Always
       containers:
         - name: core
-          image: mentolss/fastapi-core:v2.11
+          image: mentolss/fastapi-core:latest
           envFrom:
             - secretRef:
                 name: fastapi-core-secret

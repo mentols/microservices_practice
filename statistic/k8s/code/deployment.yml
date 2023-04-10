@@ -22,7 +22,7 @@ spec:
       restartPolicy: Always
       containers:
         - name: statistic
-          image: mentolss/fastapi-statistic:v1.1
+          image: mentolss/fastapi-statistic:latest
           envFrom:
             - secretRef:
                 name: fastapi-statistic-secret
